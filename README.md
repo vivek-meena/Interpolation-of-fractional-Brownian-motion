@@ -140,7 +140,7 @@ Least-square fitting is used to estimate the diffusion coefficient from log–lo
 
 Clone the repository
 
-git clone https://github.com/yourusername/project-name.git
+git clone https://github.com/vivek-meena/Interpolation-of-fractional-Brownian-motion/tree/main
 
 Install dependencies
 
