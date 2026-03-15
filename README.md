@@ -1,6 +1,4 @@
-# Generate the README.md file with the provided content
 
-content = """
 # Interpolation of Fractional Brownian Motion
 
 This project focuses on the **numerical simulation and analysis of stochastic processes**, particularly Brownian motion. The simulation is implemented using **Python** to generate particle trajectories based on the **Langevin equation**, and the statistical properties of the motion are analyzed using mean square displacement and probability distribution functions.
