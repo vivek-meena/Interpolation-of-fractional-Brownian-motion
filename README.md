@@ -1,168 +1,203 @@
-
 # Interpolation of Fractional Brownian Motion
 
-This project focuses on the **numerical simulation and analysis of stochastic processes**, particularly Brownian motion. The simulation is implemented using **Python** to generate particle trajectories based on the **Langevin equation**, and the statistical properties of the motion are analyzed using mean square displacement and probability distribution functions.
+**B.Tech Project Report** | Department of Physics | Indian Institute of Technology Guwahati
+**Author:** Vivek Meena (Roll No. 230121067) | **Supervisor:** Prof. Samudrajit Thapa | **Year:** 2026
 
 ---
 
-# Overview
+## Overview
 
-Brownian motion describes the random movement of particles caused by thermal fluctuations. It is widely used in **statistical physics, diffusion theory, and stochastic modeling**.
+This project presents a comprehensive **numerical simulation and statistical analysis of Brownian motion** using a discrete Langevin dynamics framework in Python. A large ensemble of stochastic particle trajectories is generated and analyzed using multiple complementary statistical tools to verify the fundamental properties of classical Brownian diffusion.
 
-In this project:
-
-- Multiple Brownian trajectories are simulated.
-- Diffusion behavior is analyzed using **TAMSD and EAMSD**.
-- Simulation results are compared with **analytical diffusion theory**.
-- Probability distributions of particle positions are studied.
+All analyses are implemented in a single Jupyter Notebook (`1ALL_CODE.ipynb`) and supporting Python scripts.
 
 ---
 
-# Mathematical Model
+## Table of Contents
 
-## Langevin Equation
-
-The stochastic motion of a Brownian particle is modeled by
-
-dx(t) = sqrt(2D dt) * η(t)
-
-where  
-
-- D = diffusion coefficient  
-- dt = time step  
-- η(t) = Gaussian white noise with mean 0 and variance 1  
+- [Overview](#overview)
+- [Mathematical Model](#mathematical-model)
+- [Simulation Parameters](#simulation-parameters)
+- [Analyses Performed](#analyses-performed)
+- [Results](#results)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [How to Run](#how-to-run)
+- [References](#references)
 
 ---
 
-# Probability Distribution Function (PDF)
+## Mathematical Model
 
-For Brownian motion, the position distribution follows a **Gaussian diffusion law**
+### Langevin Equation (Discrete Form)
 
-P(x,t) = (1 / sqrt(4πDt)) * exp(-x² / (4Dt))
+The stochastic motion of a Brownian particle is modeled using:
 
-where  
+$$x_{i+1} = x_i + \sqrt{2D \, dt} \cdot \eta_i$$
 
-- P(x,t) = probability density  
-- x = particle position  
-- t = time  
-- D = diffusion coefficient  
+where:
+- $D$ = diffusion coefficient
+- $dt$ = time step
+- $\eta_i \sim \mathcal{N}(0, 1)$ = standard normal random variable
 
-The simulation histogram of particle positions is compared with this theoretical distribution.
+### Time-Averaged Mean Squared Displacement (TAMSD)
 
----
+$$\delta_i^2(\Delta) = \frac{1}{N - \Delta} \sum_{k=1}^{N-\Delta} \left[ x_i(k + \Delta) - x_i(k) \right]^2$$
 
-# Time Averaged Mean Square Displacement (TAMSD)
+### Ensemble-Averaged TAMSD (EATAMSD)
 
-The TAMSD for a trajectory x(t) is defined as
+$$\langle \delta^2(\Delta) \rangle = \frac{1}{N_\text{traj}} \sum_{i=1}^{N_\text{traj}} \delta_i^2(\Delta)$$
 
-δ²(Δ) = (1/(T-Δ)) Σ [x(t+Δ) − x(t)]²
+### Ergodicity Breaking (EB) Parameter
 
-where  
+$$EB(\Delta) = \frac{\langle \delta^4(\Delta) \rangle}{\langle \delta^2(\Delta) \rangle^2} - 1$$
 
-- Δ = lag time  
-- T = total observation time  
+For Brownian motion, the theoretical prediction is:
 
-TAMSD measures diffusion behavior within a **single trajectory**.
+$$EB(\Delta) = \frac{4\Delta}{3T}$$
 
----
+### Probability Distribution Function
 
-# Ensemble Averaged TAMSD
-
-When multiple trajectories are simulated, the **ensemble average** of TAMSD is calculated as
-
-<δ²(Δ)> = (1/N) Σ δ²_i(Δ)
-
-where  
-
-- N = number of trajectories  
+$$P(x, t) = \frac{1}{\sqrt{4\pi D t}} \exp\left(-\frac{x^2}{4Dt}\right)$$
 
 ---
 
-# Ensemble Averaged Mean Square Displacement (EAMSD)
-
-The ensemble averaged MSD is defined as
-
-<x²(t)> = (1/N) Σ [x_i(t) − x_i(0)]²
-
-For normal Brownian diffusion,
-
-<x²(t)> = 2Dt
-
-which shows **linear scaling with time**.
-
----
-
-# Simulation Parameters
+## Simulation Parameters
 
 | Parameter | Value |
-|-----------|------|
-| Number of trajectories | 1000 |
-| Time steps | 50,000 |
-| Time step size | 0.001 |
-| Diffusion coefficient | 0.5 |
+|---|---|
+| Number of trajectories | 5000 |
+| Number of time steps | 1000 |
+| Time step `dt` | 0.0001 |
+| Diffusion coefficient `D` | 0.5 |
 
 ---
 
-# Results and Analysis
+## Analyses Performed
 
-The simulation produces the following results:
+The notebook (`1ALL_CODE.ipynb`) contains the following analyses in order:
 
-### Brownian Trajectories
-Random particle paths demonstrating stochastic motion.
+### 1. Trajectory Generation
+- Simulates 5000 independent Brownian trajectories using the Langevin model
+- Plots 20 sample trajectories to visualize stochastic motion
 
-### TAMSD Analysis
-Time-averaged MSD is computed for individual trajectories to study diffusion behavior.
+### 2. Time-Averaged MSD (TAMSD)
+- Computes TAMSD for all 5000 trajectories
+- Computes ensemble-averaged TAMSD
+- Plots on log-log scale to verify linear scaling $\delta^2 \propto \Delta$
 
-### Ensemble MSD
-Averaging across many trajectories shows the theoretical relation
+### 3. Ensemble-Averaged MSD (EAMSD) vs EATAMSD
+- Computes EAMSD: $\langle x^2(t) \rangle = \frac{1}{N} \sum [x_i(t) - x_i(0)]^2$
+- Compares EAMSD and EATAMSD on log-log scale to verify ergodicity
 
-MSD ∝ t
+### 4. Scaling Analysis & Diffusion Coefficient Estimation
+- Performs log-log linear regression on TAMSD:  $y = mx + c$
+- Extracts scaling exponent $\alpha$ (slope) and intercept $c$
+- Estimates diffusion coefficient: $D = 10^c / 2$
 
-### Probability Distribution
-The simulated distribution of particle positions matches the **Gaussian distribution predicted by diffusion theory**.
+### 5. Ergodicity Breaking (EB) Parameter
+- Computes EB parameter from TAMSD fluctuations
+- Compares simulation EB with theoretical prediction $4\Delta/3T$
 
-### Diffusion Coefficient Estimation
-Least-square fitting is used to estimate the diffusion coefficient from log–log MSD plots.
+### 6. Position Distribution & Gaussian Analysis
+- Extracts particle positions at final time $t = T$
+- Fits Gaussian distribution and compares with theoretical PDF
+- Reports mean $\mu$, variance $\sigma^2$, and theoretical $2Dt$
+
+### 7. Time Evolution of Variance
+- Computes $\sigma^2(t)$ at every time step across all trajectories
+- Compares with theoretical curve $2Dt$
+
+### 8. Time Evolution of PDF
+- Extracts position distributions at multiple time snapshots
+- Fits Gaussian at each time and overlays theoretical PDF
+
+### 9. Displacement Distribution at Different Lag Times
+- Analyzes displacement PDFs for lag values: $\Delta = 2, 10, 15, 20, 50, 60, 70, 100$
+- Fits Gaussian and compares with theory $\sigma^2 = 2D\Delta \cdot dt$
+- Generates individual subplots and combined overlay plot
 
 ---
 
-# Technologies Used
+## Results
 
-- Python  
-- NumPy  
-- Matplotlib  
+| Quantity | Simulated | Theoretical |
+|---|---|---|
+| Scaling exponent $\alpha$ | 1.0079 | 1.0 |
+| Diffusion coefficient $D$ | 0.5214 | 0.5 |
+| Mean position $\mu$ | 0.0043 | 0.0 |
+| Variance $\sigma^2$ at $t=T$ | 0.0988 | 0.0999 |
 
----
-
-# How to Run
-
-Clone the repository
-
-git clone https://github.com/vivek-meena/Interpolation-of-fractional-Brownian-motion/tree/main
-
-Install dependencies
-
-pip install numpy matplotlib
-
-Run the simulation
-
-python simulation.py
+All analyses confirm that the simulated system exhibits **classical Brownian motion with normal diffusion and ergodic behavior**.
 
 ---
 
-# Applications
+## Project Structure
 
-The methods used in this project are relevant for
+```
+Interpolation-of-fractional-Brownian-motion/
+│
+├── null.ipynb          # Main Jupyter Notebook (all analyses)
+└── README.md                # This file
+```
 
-- Statistical physics
-- Diffusion and transport phenomena
-- Particle tracking experiments
-- Stochastic modeling
-- Financial random walk models
-"""
+---
 
-path = "/mnt/data/README.md"
-with open(path, "w") as f:
-    f.write(content)
+## Requirements
 
-path
+Install dependencies using:
+
+```bash
+pip install numpy matplotlib scipy
+```
+
+| Package | Version |
+|---|---|
+| Python | ≥ 3.6 |
+| NumPy | any |
+| Matplotlib | any |
+| SciPy | any |
+
+---
+
+## How to Run
+
+### Option 1 — Jupyter Notebook (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/vivek-meena/Interpolation-of-fractional-Brownian-motion.git
+
+# Navigate into the folder
+cd Interpolation-of-fractional-Brownian-motion
+
+# Install dependencies
+pip install numpy matplotlib scipy
+
+# Launch Jupyter
+jupyter notebook 1ALL_CODE.ipynb
+```
+
+### Option 2 — Run individual Python scripts
+
+```bash
+python 1D_TAMSD.py
+python TAMSD_MT.py
+python log.py
+```
+
+---
+
+## References
+
+1. S. Thapa, N. Lukat, C. Selhuber-Unkel, A. G. Cherstvy, and R. Metzler, *"Transient superdiffusion of polydisperse vacuoles in highly motile amoeboid cells,"* J. Chem. Phys., vol. 150, p. 144901, 2019. https://doi.org/10.1063/1.5086269
+
+2. I. M. Jánosi, A. Padash, J. A. C. Gallas, and H. Kantz, *"Passive tracer advection in the equatorial Pacific region: statistics, correlations and a model of fractional Brownian motion,"* Ocean Sci., vol. 18, pp. 307–320, 2022. https://doi.org/10.5194/os-18-307-2022
+
+3. Wikipedia, *"Brownian motion,"* Wikipedia, The Free Encyclopedia. https://en.wikipedia.org/wiki/Brownian_motion
+
+---
+
+## License
+
+This project was developed as a B.Tech project at **IIT Guwahati** under the supervision of **Prof. Samudrajit Thapa**. All rights reserved © 2026 Vivek Meena.
